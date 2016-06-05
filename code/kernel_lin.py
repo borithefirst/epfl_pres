@@ -248,7 +248,7 @@ def main(argv):
     )
 
     trfs = []
-    # Feature engineering random kitchen sinks, boosting or Nystroem (default)
+    # Feature engineering random kitchen sinks, boosting or Nystroem.
     if FLAGS.rbfsampler:
         trfs.append(RBFSampler(n_components=kd, gamma=FLAGS.gamma))
     if FLAGS.boosting:
