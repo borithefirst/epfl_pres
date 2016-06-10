@@ -36,6 +36,12 @@ gflags.DEFINE_bool(
     False,
     'Uses a boosting transform',
 )
+gflags.DEFINE_integer(
+    'boosting_estimators',
+    20,
+    'number of trees to build',
+)
+
 gflags.DEFINE_bool(
     'nystroem',
     False,
@@ -142,11 +148,11 @@ def circle(r, n, angle_limit=(0.0, 2 * np.pi), bias=(0.0, 0.0)):
 
 
 def get_Xy(N):
+    r = 1 - FLAGS.mixing
     if FLAGS.dataset == 'circles':
         c1 = circle(8.0, N)
-        c2 = circle(16.0, N)
+        c2 = circle(8 * (1.0 + r) , N)
     elif FLAGS.dataset == 'arcs':
-        r = 1 - FLAGS.mixing
         c1 = circle(r * 20.0, N, angle_limit=(-np.pi / 2, np.pi / 2), bias=(-5 * r, 10.0 * r))
         c2 = circle(r * 20.0, N, angle_limit=(np.pi / 2, 3 * np.pi / 2), bias=(5 * r, -10.0 * r))
     else:
@@ -252,7 +258,7 @@ def main(argv):
     if FLAGS.rbfsampler:
         trfs.append(RBFSampler(n_components=kd, gamma=FLAGS.gamma))
     if FLAGS.boosting:
-        trfs.append(GRDTransformer(n_estimators=5))
+        trfs.append(GRDTransformer(n_estimators=FLAGS.boosting_estimators))
     if FLAGS.nystroem:
         trfs.append(Nystroem(kernel=FLAGS.metric, n_components=kd, gamma=FLAGS.gamma))
 
